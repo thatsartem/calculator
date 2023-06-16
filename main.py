@@ -7,6 +7,7 @@ import schemas
 import models
 import crud
 from database import SessionLocal, engine
+from formulas import get_percentage
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -28,16 +29,19 @@ def get_db():
         db.close()
 
 @app.post("/api/get_directions/", response_model=List[schemas.Direction])
-def get_directions(subjects: schemas.SubjectsIn ,db: Session = Depends(get_db)):
+def get_directions(subjects: schemas.OptionsDirections, db: Session = Depends(get_db)):
     if not subjects.university:
-        directions = crud.get_directions_by_subjects(db, subjects.subjects)
+        directions = crud.get_directions_by_subjects(db, subjects)
     else:
-        directions = crud.get_directions_by_university(db,subjects.subjects, subjects.university)
+        directions = crud.get_directions_by_university(db, subjects)
+    for d in directions:
+        if d.mean != -1 and d.dispersion != -1:
+            d.chance = get_percentage(subjects.total_score,d.mean,d.dispersion)
     return directions
 
-@app.post("/api/get_universities/")
-def get_universities(subjects: schemas.SubjectsIn, db: Session = Depends(get_db)):
-    universities = crud.get_universities_by_subjects(db, subjects.subjects)
+@app.post("/api/get_universities/", response_model=List[schemas.UniverstityOut])
+def get_universities(subjects: schemas.OptionsUniversities, db: Session = Depends(get_db)):
+    universities = crud.get_universities_by_subjects(db, subjects)
     return universities
 
 @app.get("/")

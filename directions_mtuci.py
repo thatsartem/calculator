@@ -24,9 +24,9 @@ link1 = "https://abitur.mtuci.ru/admission/firstcourse_budget/detail.php?ide=409
 link2 = "https://abitur.mtuci.ru/admission/firstcourse_budget/detail.php?ide=5663&ids=356"
 link3 = "https://abitur.mtuci.ru/admission/firstcourse_budget/detail.php?ide=4027&ids=356"
 links = [
-    (link1,'Очный'),
-    (link2,'Очно-заочный'),
-    (link3,'Заочный')
+    (link1,'Очная'),
+    (link2,'Очно-заочная'),
+    (link3,'Заочная')
 ]
 
 data = []
@@ -77,15 +77,16 @@ for link, form in links:
         tuition_fee = int(columns[4].get_text(strip=True).replace(" ",""))
         for subjects in combined_lists:
             data.append({
-                'university': 'МТУСИ',
+                'university': 'Московский Технический Университет Связи и Информатики',
                 'code': code,
                 'name': name,
                 'form': form,
                 'subjects': subjects,
                 'budget_seats': budget_seats,
-                'passing_score': -1 if passing_score=='-' else int(passing_score),
+                'passing_score': None if passing_score=='-' else int(passing_score),
                 'paid_seats': paid_seats,
-                'tuition_fee': tuition_fee
+                'tuition_fee': tuition_fee,
+                'link': link
             })
 
 
@@ -94,5 +95,7 @@ with SessionLocal() as session:
         insert(Directions),data
     )
     session.commit()
+
+
 
 print('insertion completed')

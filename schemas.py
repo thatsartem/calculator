@@ -10,14 +10,36 @@ class Direction(BaseModel):
     subjects: List[int]
     budget_seats: int
     paid_seats: int
-    passing_score: int
+    passing_score: Optional[int]
     tuition_fee: int
     mean: int
     dispersion: int
+    link: str
+    chance: float = -1
 
     class Config:
         orm_mode = True
 
-class SubjectsIn(BaseModel):
+class OptionsDirections(BaseModel):
     subjects: List[int]
     university: Optional[str] = None
+    forms: Optional[List[str]] = []
+    formats: Optional[List[str]] = None
+    achievs: Optional[List[str]] = None
+    total_score: int 
+
+class OptionsUniversities(BaseModel):
+    subjects: List[int]
+    forms: Optional[List[str]] = None
+    formats: Optional[List[str]] = None
+    achievs: Optional[List[str]] = None
+    total_score: Optional[int] = None
+
+class UniverstityOut(BaseModel):
+    name: str
+    count: int
+    avg_tuition_fee: Optional[int]
+    avg_passing_score: Optional[int]
+
+    class Config:
+        orm_mode = True
